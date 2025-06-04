@@ -18,10 +18,8 @@ import math
 import json
 import random
 
-# Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Cyberpunk color palette
 CYBER_BLUE = "#00f0ff"
 CYBER_PURPLE = "#bd00ff"
 CYBER_GREEN = "#00ff9d"
@@ -32,7 +30,6 @@ CYBER_DARK = "#0a0a0a"
 CYBER_DARKER = "#050505"
 CYBER_LIGHT = "#e0e0e0"
 
-# HTML content for the cyberpunk map
 HTML_CONTENT = """
 <!DOCTYPE html>
 <html lang="en">
@@ -460,16 +457,12 @@ class CyberTechPacketTracker(QMainWindow):
         self.setWindowTitle("CYBERTECH PACKET TRACKER")
         self.setGeometry(100, 100, 1280, 800)
         
-        # Load cyberpunk font
         self.load_fonts()
         
-        # Set cyberpunk palette
         self.set_cyberpunk_style()
         
-        # Flag to prevent multiple simultaneous scans
         self.geo_scan_in_progress = False
         
-        # Set up main widget and layout
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
         main_layout = QVBoxLayout()
@@ -477,7 +470,6 @@ class CyberTechPacketTracker(QMainWindow):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
         
-        # Header with cyberpunk styling
         self.header = QLabel("CYBERTECH PACKET TRACKER")
         self.header.setAlignment(Qt.AlignCenter)
         self.header.setStyleSheet(f"""
@@ -491,7 +483,6 @@ class CyberTechPacketTracker(QMainWindow):
         """)
         main_layout.addWidget(self.header)
         
-        # Create tabs with cyberpunk styling
         self.tabs = QTabWidget()
         self.tabs.setStyleSheet(f"""
             QTabWidget::pane {{
@@ -550,7 +541,6 @@ class CyberTechPacketTracker(QMainWindow):
             }}
         """)
         
-        # Set column widths
         self.packet_table.setColumnWidth(0, 120)  # Time
         self.packet_table.setColumnWidth(1, 180)  # Source
         self.packet_table.setColumnWidth(2, 180)  # Dest
@@ -558,11 +548,9 @@ class CyberTechPacketTracker(QMainWindow):
         self.packet_table.setColumnWidth(4, 60)   # Length
         self.packet_table.setColumnWidth(5, 400)  # Info
         
-        # Enable sorting
         self.packet_table.setSortingEnabled(True)
         self.packet_table.sortByColumn(0, Qt.AscendingOrder)
         
-        # Selection behavior
         self.packet_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.packet_table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.packet_table.selectionModel().selectionChanged.connect(self.show_packet_details)
@@ -570,7 +558,6 @@ class CyberTechPacketTracker(QMainWindow):
         packet_list_layout.addWidget(self.packet_table)
         self.tabs.addTab(self.packet_list_widget, "PACKET LIST")
         
-        # Packet Details Tab
         self.packet_details_widget = QWidget()
         packet_details_layout = QVBoxLayout()
         self.packet_details_widget.setLayout(packet_details_layout)
@@ -591,7 +578,6 @@ class CyberTechPacketTracker(QMainWindow):
         packet_details_layout.addWidget(self.details_text)
         self.tabs.addTab(self.packet_details_widget, "PACKET INSPECTOR")
         
-        # Hex Dump Tab
         self.hex_widget = QWidget()
         hex_layout = QVBoxLayout()
         self.hex_widget.setLayout(hex_layout)
@@ -612,7 +598,6 @@ class CyberTechPacketTracker(QMainWindow):
         hex_layout.addWidget(self.hex_text)
         self.tabs.addTab(self.hex_widget, "HEX ANALYZER")
         
-        # Network Map Tab
         self.map_widget = QWidget()
         map_layout = QVBoxLayout()
         self.map_widget.setLayout(map_layout)
@@ -623,14 +608,12 @@ class CyberTechPacketTracker(QMainWindow):
         map_layout.addWidget(self.map_view)
         self.tabs.addTab(self.map_widget, "NETWORK MAP")
         
-        # Control Panel
         control_widget = QWidget()
         control_layout = QHBoxLayout()
         control_widget.setLayout(control_layout)
         control_widget.setStyleSheet(f"background-color: {CYBER_DARKER};")
         control_layout.setContentsMargins(10, 5, 10, 5)
         
-        # Interface selection
         interface_label = QLabel("INTERFACE:")
         interface_label.setStyleSheet(f"color: {CYBER_BLUE}; font-family: 'Courier New'; font-size: 11px;")
         control_layout.addWidget(interface_label)
@@ -662,7 +645,6 @@ class CyberTechPacketTracker(QMainWindow):
             self.interface_combo.addItems(interfaces)
         control_layout.addWidget(self.interface_combo)
         
-        # Filter
         filter_label = QLabel("FILTER:")
         filter_label.setStyleSheet(f"color: {CYBER_BLUE}; font-family: 'Courier New'; font-size: 11px;")
         control_layout.addWidget(filter_label)
@@ -682,14 +664,12 @@ class CyberTechPacketTracker(QMainWindow):
         self.filter_entry.setText("ip or ip6")
         control_layout.addWidget(self.filter_entry)
         
-        # Buttons
         self.create_cyber_button("START", self.start_sniffing, control_layout)
         self.create_cyber_button("STOP", self.stop_sniffing, control_layout, False)
         self.create_cyber_button("GEO SCAN", self.scan_selected_packet_geo, control_layout)
         self.create_cyber_button("MAP TRACE", self.show_in_map, control_layout)
         self.create_cyber_button("CLEAR", self.clear_display, control_layout)
         
-        # Status
         self.status_label = QLabel("SYSTEM READY")
         self.status_label.setStyleSheet(f"""
             color: {CYBER_BLUE};
@@ -703,34 +683,28 @@ class CyberTechPacketTracker(QMainWindow):
         """)
         control_layout.addWidget(self.status_label)
         
-        # Add some stretch
         control_layout.addStretch()
         
         main_layout.addWidget(control_widget)
         
-        # Sniffer control
         self.sniffer_thread = None
         self.packet_queue = queue.Queue()
         self.packets = []
         
-        # Start processing packets
         self.process_packet_queue()
     
     def load_fonts(self):
-        # Try to load a cyberpunk-style font
         font_db = QFontDatabase()
         if "Courier New" in font_db.families():
             cyber_font = QFont("Courier New", 10)
             cyber_font.setBold(True)
             QApplication.setFont(cyber_font)
         else:
-            # Fallback to monospace
             fallback_font = QFont("Monospace", 10)
             fallback_font.setBold(True)
             QApplication.setFont(fallback_font)
     
     def set_cyberpunk_style(self):
-        # Set the overall application style
         palette = QPalette()
         palette.setColor(QPalette.Window, QColor(CYBER_DARKER))
         palette.setColor(QPalette.WindowText, QColor(CYBER_BLUE))
@@ -746,7 +720,6 @@ class CyberTechPacketTracker(QMainWindow):
         palette.setColor(QPalette.HighlightedText, QColor(CYBER_DARK))
         QApplication.setPalette(palette)
         
-        # Additional style tweaks
         self.setStyleSheet(f"""
             QMainWindow {{
                 background-color: {CYBER_DARKER};
@@ -810,7 +783,6 @@ class CyberTechPacketTracker(QMainWindow):
         button.setEnabled(enabled)
         layout.addWidget(button)
         
-        # Store reference to important buttons
         if text == "START":
             self.start_button = button
         elif text == "STOP":
@@ -850,7 +822,6 @@ class CyberTechPacketTracker(QMainWindow):
         row = self.packet_table.rowCount()
         self.packet_table.insertRow(row)
         
-        # Create items with cyberpunk styling
         time_item = QTableWidgetItem(time_str)
         src_item = QTableWidgetItem(src)
         dst_item = QTableWidgetItem(dst)
@@ -858,7 +829,6 @@ class CyberTechPacketTracker(QMainWindow):
         length_item = QTableWidgetItem(str(length))
         info_item = QTableWidgetItem(info)
         
-        # Set items in table
         self.packet_table.setItem(row, 0, time_item)
         self.packet_table.setItem(row, 1, src_item)
         self.packet_table.setItem(row, 2, dst_item)
@@ -866,7 +836,6 @@ class CyberTechPacketTracker(QMainWindow):
         self.packet_table.setItem(row, 4, length_item)
         self.packet_table.setItem(row, 5, info_item)
         
-        # Color code packets by protocol
         color = CYBER_BLUE  # Default
         if protocol == "TCP":
             color = CYBER_GREEN
