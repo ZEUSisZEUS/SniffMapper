@@ -67,10 +67,10 @@ The application uses the free tier of ipinfo.io for geolocation. Be aware of the
 
 ## Screenshots
 
-![Packet List View](screenshots/packet_list.png)
+![Packet List View](packet_list.png)
 *Packet list with color-coded protocols*
 
-![Network Map](screenshots/network_map.png)
+![Network Map](network_map.png)
 *Interactive cyberpunk network map*
 
 ## Troubleshooting
