@@ -1,0 +1,8 @@
+PyQt5
+PyQtWebEngine
+scapy
+requests
+random
+json
+ipaddress
+queue
